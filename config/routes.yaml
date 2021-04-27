@@ -1,3 +1,30 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+articles_list:
+  path: /api/v1/articles
+  controller: App\Controller\ArticleController:listAction
+  methods: [GET]
+
+articles_view:
+  path: /api/v1/articles/{articleId}
+  controller: App\Controller\ArticleController:viewAction
+  methods: [GET]
+  requirements:
+    articleId: '\d+'
+
+artiles_create:
+  path: /api/v1/articles
+  controller: App\Controller\ArticleController:createAction
+  methods: [POST]
+
+artiles_edit:
+  path: /api/v1/articles/{articleId}
+  controller: App\Controller\ArticleController:updateAction
+  methods: [PUT]
+  requirements:
+    articleId: '\d+'
+
+artiles_delete:
+  path: /api/v1/articles/{articleId}
+  controller: App\Controller\ArticleController:deleteAction
+  methods: [DELETE]
+  requirements:
+    articleId: '\d+'
