@@ -28,3 +28,15 @@ artiles_delete:
   methods: [DELETE]
   requirements:
     articleId: '\d+'
+
+tags_create:
+  path: /api/v1/tags
+  controller: App\Controller\TagController:createAction
+  methods: [POST]
+
+tags_edit:
+  path: /api/v1/tags/{tagId}
+  controller: App\Controller\TagController:updateAction
+  methods: [PUT]
+  requirements:
+      tagId: '\d+'
