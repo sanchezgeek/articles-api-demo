@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Tag;
 use App\Service\Dto\Tag as TagDto;
 use App\Repository\TagRepository;
+use App\Service\Exception\NotUniqueEntityException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -35,9 +36,14 @@ class TagsService
      *
      * @throws ORMException
      * @throws OptimisticLockException
+     * @throws NotUniqueEntityException
      */
     public function create(string $name): TagDto
     {
+        if ($this->tagRepository->findByName($name)) {
+            throw new NotUniqueEntityException('Tag with this name already exists');
+        }
+
         $tag = new Tag();
         $tag->setName($name);
 

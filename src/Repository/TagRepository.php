@@ -15,4 +15,9 @@ class TagRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Tag::class);
     }
+
+    public function findByName($name): ?Tag
+    {
+        return $this->findOneBy(['name' => $name]);
+    }
 }
