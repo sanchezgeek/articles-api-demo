@@ -9,11 +9,13 @@ use App\Entity\Tag;
 use App\Service\Dto\Article as ArticleDto;
 use App\Service\Dto\Tag as TagDto;
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ArticlesService
 {
@@ -62,14 +64,51 @@ class ArticlesService
     /**
      * Сохранение статьи
      *
-     * @param Article $article
+     * @param string $title
+     * @param array|Tag[] $tags
+     *
      * @return ArticleDto
      *
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function save(Article $article): ArticleDto
+    public function create(string $title, array $tags = []): ArticleDto
     {
+        $tags = array_filter($tags, fn($tag) => $tag instanceof Tag);
+
+        $article = new Article();
+        $article->setTitle($title);
+        $article->setTags(new ArrayCollection($tags));
+
+        $this->entityManager->persist($article);
+        $this->entityManager->flush();
+
+        return $this->buildArticleDto($article);
+    }
+
+    /**
+     * Редактирование статьи
+     *
+     * @param int $articleId
+     * @param string $title
+     * @param array|Tag[] $tags
+     *
+     * @return ArticleDto
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function update(int $articleId, string $title, array $tags = []): ArticleDto
+    {
+        if (!$article = $this->articleRepository->find($articleId)) {
+            throw new EntityNotFoundException('Article not found');
+        }
+
+        $tags = array_filter($tags, fn($tag) => $tag instanceof Tag);
+
+        $article->setTitle($title);
+        $article->setTags(new ArrayCollection($tags));
+
         $this->entityManager->persist($article);
         $this->entityManager->flush();
 
