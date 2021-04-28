@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,6 +26,18 @@ class Article
      */
     private string $title;
 
+    /**
+     * @var Collection|Tag[]
+     *
+     * @ORM\ManyToMany(targetEntity="Tag")
+     */
+    private Collection $tags;
+
+    public function __construct()
+    {
+        $this->tags = new ArrayCollection();
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -37,5 +51,21 @@ class Article
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return Tag[]|Collection
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param Tag[]|Collection $tags
+     */
+    public function setTags(Collection $tags): void
+    {
+        $this->tags = $tags;
     }
 }

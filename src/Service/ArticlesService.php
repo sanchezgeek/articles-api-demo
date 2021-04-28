@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Article;
+use App\Entity\Tag;
 use App\Service\Dto\Article as ArticleDto;
+use App\Service\Dto\Tag as TagDto;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
@@ -35,7 +37,7 @@ class ArticlesService
     public function list(): array
     {
         return array_map(
-            fn ($article) => new ArticleDto($article->getId(), $article->getTitle()),
+            fn (Article $article) => $this->buildArticleDto($article),
             $this->articleRepository->findBy([], ['title' => Criteria::ASC])
         );
     }
@@ -55,53 +57,24 @@ class ArticlesService
             throw new EntityNotFoundException("Article with id {$articleId} not found");
         }
 
-        return new ArticleDto($article->getId(), $article->getTitle());
+        return $this->buildArticleDto($article);
     }
 
     /**
-     * Создание статьи с указанным названием
+     * Сохранение статьи
      *
-     * @param string $title
+     * @param Article $article
      * @return ArticleDto
      *
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function create(string $title): ArticleDto
+    public function save(Article $article): ArticleDto
     {
-        $article = new Article();
-        $article->setTitle($title);
-
         $this->entityManager->persist($article);
         $this->entityManager->flush();
 
-        return new ArticleDto($article->getId(), $article->getTitle());
-    }
-
-    /**
-     * Редактирование статьи
-     *
-     * @param int $articleId
-     * @param string $title
-     *
-     * @return ArticleDto
-     *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws EntityNotFoundException
-     */
-    public function update(int $articleId, string $title): ArticleDto
-    {
-        if (!$article = $this->articleRepository->find($articleId)) {
-            throw new EntityNotFoundException("Article with id {$articleId} not found");
-        }
-
-        $article->setTitle($title);
-
-        $this->entityManager->persist($article);
-        $this->entityManager->flush();
-
-        return new ArticleDto($article->getId(), $article->getTitle());
+        return $this->buildArticleDto($article);
     }
 
     /**
@@ -124,5 +97,15 @@ class ArticlesService
         $this->entityManager->flush();
 
         return true;
+    }
+
+    private function buildArticleDto(Article $article): ArticleDto
+    {
+        $tags =  array_map(
+            fn (Tag $tag) => new TagDto($tag->getId(), $tag->getName()),
+            $article->getTags()->toArray()
+        );
+
+        return new ArticleDto($article->getId(), $article->getTitle(), $tags);
     }
 }

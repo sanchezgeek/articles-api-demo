@@ -53,7 +53,7 @@ class ArticleController extends ApiController
         }
 
         return $this->response(
-            $this->articlesService->create($form->getData()->getTitle())
+            $this->articlesService->save($form->getData())
         );
     }
 
@@ -71,7 +71,7 @@ class ArticleController extends ApiController
         }
 
         return $this->response(
-            $this->articlesService->update($articleId, $form->getData()->getTitle())
+            $this->articlesService->save($form->getData())
         );
     }
 
