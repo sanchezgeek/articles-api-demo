@@ -33,7 +33,7 @@ services:
         volumes:
             - ./:/app/
         ports:
-            - 80:80
+            - 8889:80
         networks:
             - symfony
 
