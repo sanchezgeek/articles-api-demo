@@ -27,8 +27,10 @@ class ArticleController extends ApiController
 
     public function listAction(Request $request): Response
     {
+        $tags = $request->get('tags') ?? [];
+
         return $this->response(
-            $this->articlesService->list()
+            $this->articlesService->list($tags)
         );
     }
 

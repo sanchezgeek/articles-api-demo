@@ -9,7 +9,6 @@ use App\Entity\Tag;
 use App\Service\Dto\Article as ArticleDto;
 use App\Service\Dto\Tag as TagDto;
 use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -34,11 +33,11 @@ class ArticlesService
      *
      * @return Article[]
      */
-    public function list(): array
+    public function list(array $tags = []): array
     {
         return array_map(
             fn (Article $article) => $this->buildArticleDto($article),
-            $this->articleRepository->findBy([], ['title' => Criteria::ASC])
+            $this->articleRepository->findByTags($tags)
         );
     }
 
