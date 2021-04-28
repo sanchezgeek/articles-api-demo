@@ -15,7 +15,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ArticlesService
 {
@@ -31,9 +30,9 @@ class ArticlesService
     }
 
     /**
-     * Получение списка статей
+     * Get articles list
      *
-     * @return Article[]
+     * @return ArticleDto[]
      */
     public function list(array $tags = []): array
     {
@@ -44,7 +43,7 @@ class ArticlesService
     }
 
     /**
-     * Получение одной статьи
+     * Get article by specified id
      *
      * @param int $articleId
      * @return ArticleDto
@@ -62,11 +61,10 @@ class ArticlesService
     }
 
     /**
-     * Сохранение статьи
+     * Article create
      *
      * @param string $title
      * @param array|Tag[] $tags
-     *
      * @return ArticleDto
      *
      * @throws ORMException
@@ -87,7 +85,7 @@ class ArticlesService
     }
 
     /**
-     * Редактирование статьи
+     * Article edit
      *
      * @param int $articleId
      * @param string $title
@@ -116,10 +114,9 @@ class ArticlesService
     }
 
     /**
-     * Удаление статьи
+     * Article delete
      *
      * @param int $articleId
-     *
      * @return bool
      *
      * @throws ORMException
